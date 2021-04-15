@@ -9,6 +9,8 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    CS101Handlers.cpp \
+    connectIEC101thread.cpp \
     iec60870/buffer_frame.c \
     iec60870/cpXXtime2a.c \
     iec60870/cs101_asdu.c \
@@ -36,6 +38,7 @@ SOURCES += \
 LIBS += -lws2_32
 
 HEADERS += \
+    connectIEC101thread.h \
     iec60870/apl_types_internal.h \
     iec60870/buffer_frame.h \
     iec60870/cs101_asdu_internal.h \
