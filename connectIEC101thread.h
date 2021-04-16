@@ -24,13 +24,18 @@ private:
     CS101_Master master = nullptr;   //соединение IEC101Master
     SerialPort port = nullptr;
     QQueue <InformationObject> commandQueue;    //очередь команд для отправки по IEC101
-    bool isRun = false; //флаг наличия соединения
+    bool running = false; //флаг наличия соединения
 
 public:
     ConnectIEC101Thread(QString ip, uint16_t port);
     bool isConnect();
     static void linkLayerStateChanged(void* parameter, int address, LinkLayerState state);
     static bool asduReceivedHandler (void* parameter, int address, CS101_ASDU asdu);
+    static void sigint_handler(int signalId, void* ptr)
+    {
+        ConnectIEC101Thread *ptrConnectIEC101Thread = static_cast<ConnectIEC101Thread*>(ptr);
+        ptrConnectIEC101Thread->running = false;
+    }
 
 signals:
     void setTextStatus(QString);    //сигнал для записи статуса соединения

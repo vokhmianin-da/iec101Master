@@ -9,7 +9,7 @@ bool ConnectIEC101Thread::isConnect()
 {
     if(master)
     {
-        if(isRun)
+        if(running)
         {
             return true;
         }
@@ -54,5 +54,5 @@ void ConnectIEC101Thread::disconnect()
 
 void ConnectIEC101Thread::run()
 {
-
+    signal(SIGINT, sigint_handler);
 }
