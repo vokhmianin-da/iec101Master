@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void setConnectionIEC104Master(QString ip, uint16_t port);  //создание соединения от мастера
+    void setConnectionIEC101Master(QString port);  //создание соединения от мастера
 
 private slots:
     void on_pbConnect_clicked();

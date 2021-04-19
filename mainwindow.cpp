@@ -14,13 +14,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setConnectionIEC104Master(QString ip, uint16_t port)
+void MainWindow::setConnectionIEC101Master(QString port)
 {
         /*Управление кнопками*/
         ui->pbConnect->setEnabled(false);
         ui->pbDisconnect->setEnabled(true);
 
-        if(!connectionThread) connectionThread = new ConnectIEC101Thread(ip, port);
+        if(!connectionThread) connectionThread = new ConnectIEC101Thread(port);
         connect(connectionThread, SIGNAL(setTextStatus(QString)), this, SLOT(on_setTextStatus(QString)));
         connect(this, SIGNAL(sendCom(int,QVariant,IEC60870_5_TypeID)), connectionThread, SLOT(commandIOformation(int,QVariant,IEC60870_5_TypeID)));
         connect(connectionThread, SIGNAL(getIEC101Info(int,int)), this, SLOT(receiveDataIEC101(int,int)));
@@ -39,7 +39,7 @@ void MainWindow::setConnectionIEC104Master(QString ip, uint16_t port)
 
 void MainWindow::on_pbConnect_clicked() //кнопка "Connect"
 {
-    setConnectionIEC104Master(ui->leIP->text(), ui->lePort->text().toUInt());
+    setConnectionIEC101Master(ui->lePort->text());
 }
 
 void MainWindow::on_pbDisconnect_clicked()  //кнопка "Disconnect"
@@ -71,7 +71,7 @@ void MainWindow::on_setTextStatus(QString str)
     ui->textEdit->append(str);
 }
 
-void MainWindow::receiveDataIEC104(int addr, int value) //прием данных по IEC104
+void MainWindow::receiveDataIEC101(int addr, int value) //прием данных по IEC104
 {
     if( addr == ui->tableWidget->item(0, 0)->text().toInt())
     {
@@ -83,7 +83,7 @@ void MainWindow::receiveDataIEC104(int addr, int value) //прием данны�
     }
 }
 
-void MainWindow::closeConnectionIEC104()    // Закрытие соединения
+void MainWindow::closeConnectionIEC101()    // Закрытие соединения
 {
     ui->textEdit->append("exit");
     disconnect(connectionThread, SIGNAL(setTextStatus(QString)), this, SLOT(on_setTextStatus(QString)));
