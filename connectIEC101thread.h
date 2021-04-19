@@ -19,15 +19,14 @@ class ConnectIEC101Thread : public QThread
     Q_OBJECT
 
 private:
-    QString ipIEC104;
-    uint16_t portIEC104;
     CS101_Master master = nullptr;   //соединение IEC101Master
     SerialPort port = nullptr;
+    QString serialPort = "COM13";
     QQueue <InformationObject> commandQueue;    //очередь команд для отправки по IEC101
     bool running = false; //флаг наличия соединения
 
 public:
-    ConnectIEC101Thread(QString ip, uint16_t port);
+    ConnectIEC101Thread(QString port);
     bool isConnect();
     static void linkLayerStateChanged(void* parameter, int address, LinkLayerState state);
     static bool asduReceivedHandler (void* parameter, int address, CS101_ASDU asdu);
@@ -39,7 +38,7 @@ public:
 
 signals:
     void setTextStatus(QString);    //сигнал для записи статуса соединения
-    void getIEC104Info(int addr, int value);    //сигнал о получении данных
+    void getIEC101Info(int addr, int value);    //сигнал о получении данных
     void closeConnection(); //сигнал о закрытии текущего соединения
 
 private slots:

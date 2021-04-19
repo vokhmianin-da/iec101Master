@@ -37,10 +37,10 @@ private slots:
     void on_setTextStatus(QString str);
 
     /*Прием данных по IEC104*/
-    void receiveDataIEC104(int addr, int value);
+    void receiveDataIEC101(int addr, int value);
 
     /*Закрытие соединения IEC104*/
-    void closeConnectionIEC104();
+    void closeConnectionIEC101();
 
 private:
     Ui::MainWindow *ui;

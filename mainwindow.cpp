@@ -23,9 +23,9 @@ void MainWindow::setConnectionIEC104Master(QString ip, uint16_t port)
         if(!connectionThread) connectionThread = new ConnectIEC101Thread(ip, port);
         connect(connectionThread, SIGNAL(setTextStatus(QString)), this, SLOT(on_setTextStatus(QString)));
         connect(this, SIGNAL(sendCom(int,QVariant,IEC60870_5_TypeID)), connectionThread, SLOT(commandIOformation(int,QVariant,IEC60870_5_TypeID)));
-        connect(connectionThread, SIGNAL(getIEC104Info(int,int)), this, SLOT(receiveDataIEC104(int,int)));
+        connect(connectionThread, SIGNAL(getIEC101Info(int,int)), this, SLOT(receiveDataIEC101(int,int)));
         connect(this, SIGNAL(commandCloseConnection()), connectionThread, SLOT(disconnect()));
-        connect(connectionThread, SIGNAL(closeConnection()), this, SLOT(closeConnectionIEC104()));
+        connect(connectionThread, SIGNAL(closeConnection()), this, SLOT(closeConnectionIEC101()));
 
         connectionThread->start();
 
@@ -88,8 +88,8 @@ void MainWindow::closeConnectionIEC104()    // Закрытие соединен
     ui->textEdit->append("exit");
     disconnect(connectionThread, SIGNAL(setTextStatus(QString)), this, SLOT(on_setTextStatus(QString)));
     disconnect(this, SIGNAL(sendCom(int,QVariant,IEC60870_5_TypeID)), connectionThread, SLOT(commandIOformation(int,QVariant,IEC60870_5_TypeID)));
-    disconnect(connectionThread, SIGNAL(getIEC104Info(int,int)), this, SLOT(receiveDataIEC104(int,int)));
+    disconnect(connectionThread, SIGNAL(getIEC101Info(int,int)), this, SLOT(receiveDataIEC101(int,int)));
     disconnect(this, SIGNAL(commandCloseConnection()), connectionThread, SLOT(disconnect()));
-    disconnect(connectionThread, SIGNAL(closeConnection()), this, SLOT(closeConnectionIEC104()));
+    disconnect(connectionThread, SIGNAL(closeConnection()), this, SLOT(closeConnectionIEC101()));
     connectionThread = nullptr;
 }

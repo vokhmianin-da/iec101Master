@@ -23,89 +23,70 @@ void ConnectIEC101Thread::linkLayerStateChanged(void* parameter, int address, Li
 
 bool ConnectIEC101Thread::asduReceivedHandler (void* parameter, int address, CS101_ASDU asdu)
 {
-    printf("SLAVE %i: RECVD ASDU type: %s(%i) elements: %i\n",
-           address,
-           TypeID_toString(CS101_ASDU_getTypeID(asdu)),
-           CS101_ASDU_getTypeID(asdu),
-           CS101_ASDU_getNumberOfElements(asdu));
+    ConnectIEC101Thread *ptrConnectThread = static_cast<ConnectIEC101Thread *>(parameter); //берем указатель на объект соединения
 
-    if (CS101_ASDU_getTypeID(asdu) == M_ME_TE_1) {
+        if (CS101_ASDU_getTypeID(asdu) == M_ME_TE_1) {  //число тип 35
 
-        printf("  measured scaled values with CP56Time2a timestamp (M_ME_TE_1):\n");
+            int i;
 
-        int i;
+            for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
 
-        for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
+                MeasuredValueScaledWithCP56Time2a io =
+                        (MeasuredValueScaledWithCP56Time2a) CS101_ASDU_getElement(asdu, i);
 
-            MeasuredValueScaledWithCP56Time2a io =
-                    (MeasuredValueScaledWithCP56Time2a) CS101_ASDU_getElement(asdu, i);
-
-            if (io != NULL) {
-
-                printf("    IOA: %i value: %i\n",
-                       InformationObject_getObjectAddress((InformationObject) io),
-                       MeasuredValueScaled_getValue((MeasuredValueScaled) io)
-                       );
+                if(ptrConnectThread->isConnect()) emit ptrConnectThread->getIEC101Info(InformationObject_getObjectAddress((InformationObject) io), MeasuredValueScaled_getValue((MeasuredValueScaled) io));
 
                 MeasuredValueScaledWithCP56Time2a_destroy(io);
             }
-            else {
-                printf("     invalid object!\n");
-            }
         }
-    }
-    else if (CS101_ASDU_getTypeID(asdu) == M_SP_NA_1) {
-        printf("  single point information (M_SP_NA_1):\n");
+        else if (CS101_ASDU_getTypeID(asdu) == M_SP_NA_1) { //дискретное значение тип 1
 
-        int i;
+            int i;
 
-        for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
+            for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
 
-            SinglePointInformation io =
-                    (SinglePointInformation) CS101_ASDU_getElement(asdu, i);
+                SinglePointInformation io =
+                        (SinglePointInformation) CS101_ASDU_getElement(asdu, i);
 
+                if(ptrConnectThread->isConnect()) emit ptrConnectThread->getIEC101Info( InformationObject_getObjectAddress((InformationObject) io), MeasuredValueScaled_getValue((MeasuredValueScaled) io));
 
-            if (io != NULL) {
-
-                printf("    IOA: %i value: %i\n",
-                       InformationObject_getObjectAddress((InformationObject) io),
-                       SinglePointInformation_getValue((SinglePointInformation) io)
-                       );
 
                 SinglePointInformation_destroy(io);
             }
-            else {
-                printf("     invalid object!\n");
+        }
+        else if (CS101_ASDU_getTypeID(asdu) == C_TS_TA_1) {
+
+        }
+        else if (CS101_ASDU_getTypeID(asdu) == M_ME_TF_1) { //число с плавающей точкой тип 36
+
+            int i;
+
+            for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
+
+                MeasuredValueScaledWithCP56Time2a io =
+                        (MeasuredValueScaledWithCP56Time2a) CS101_ASDU_getElement(asdu, i);
+
+                if(ptrConnectThread->isConnect()) emit ptrConnectThread->getIEC101Info(InformationObject_getObjectAddress((InformationObject) io), MeasuredValueScaled_getValue((MeasuredValueScaled) io));
+
+
+                MeasuredValueScaledWithCP56Time2a_destroy(io);
             }
         }
-    }
-    else if (CS101_ASDU_getTypeID(asdu) == M_EP_TD_1) {
-        printf("   event of protection equipment (M_EP_TD_1):\n");
+        else if (CS101_ASDU_getTypeID(asdu) == M_BO_TB_1) { //строка тип 33
 
-        int i;
+            int i;
 
-        for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
+            for (i = 0; i < CS101_ASDU_getNumberOfElements(asdu); i++) {
 
-            EventOfProtectionEquipmentWithCP56Time2a epe = (EventOfProtectionEquipmentWithCP56Time2a)
-                    CS101_ASDU_getElement(asdu, i);
+                MeasuredValueScaledWithCP56Time2a io =
+                        (MeasuredValueScaledWithCP56Time2a) CS101_ASDU_getElement(asdu, i);
 
-            if (epe != NULL) {
+                if(ptrConnectThread->isConnect()) emit ptrConnectThread->getIEC101Info(InformationObject_getObjectAddress((InformationObject) io), MeasuredValueScaled_getValue((MeasuredValueScaled) io));
 
-                SingleEvent singleEvent = EventOfProtectionEquipmentWithCP56Time2a_getEvent(epe);
 
-                printf("    IOA: %i state: %i  QDQ: %i\n",
-                       InformationObject_getObjectAddress((InformationObject) epe),
-                       SingleEvent_getEventState(singleEvent),
-                       SingleEvent_getQDP(singleEvent)
-                       );
-
-                EventOfProtectionEquipmentWithCP56Time2a_destroy(epe);
-            }
-            else {
-                printf("     invalid object!\n");
+                MeasuredValueScaledWithCP56Time2a_destroy(io);
             }
         }
-    }
 
-    return true;
+        return true;
 }
