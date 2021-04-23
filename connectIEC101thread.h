@@ -24,6 +24,9 @@ private:
     QString serialPort = "COM13";
     QQueue <InformationObject> commandQueue;    //очередь команд для отправки по IEC101
     bool running = false; //флаг наличия соединения
+    sLinkLayerParameters llParameters;  //параметры соединения
+    uint16_t commTimeout = 50;
+    bool useSingleCharAck = true;
 
 public:
     ConnectIEC101Thread(QString port);

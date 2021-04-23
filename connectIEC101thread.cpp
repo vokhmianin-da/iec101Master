@@ -58,7 +58,12 @@ void ConnectIEC101Thread::run()
 
     port = SerialPort_create(serialPort.toStdString().c_str(), 9600, 8, 'E', 1);
 
-    CS101_Master master = CS101_Master_create(port, NULL, NULL, IEC60870_LINK_LAYER_UNBALANCED);
+    llParameters.addressLength = 1;
+    llParameters.timeoutForAck = commTimeout;
+    llParameters.timeoutRepeat = 2 * commTimeout;
+    llParameters.useSingleCharACK = useSingleCharAck;
+
+    CS101_Master master = CS101_Master_create(port, &llParameters, NULL, IEC60870_LINK_LAYER_UNBALANCED);
 
     /* Setting the callback handler for generic ASDUs */
     CS101_Master_setASDUReceivedHandler(master, asduReceivedHandler, NULL);
